@@ -7,13 +7,13 @@ secret = "jYY04PYnWdtiviy8NW0cq70CJcVhxKqZWZeKXHzK"
 
 def get_target_price(ticker, k):
     """변동성 돌파 전략으로 매수 목표가 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=2) #Change in timeframe
+    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=2) #Change in timeframe
     target_price = df.iloc[0]['close'] + (df.iloc[0]['high'] - df.iloc[0]['low']) * k
     return target_price
 
 def get_start_time(ticker):
     """시작 시간 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="minute60", count=1)
+    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=1) #Change in timeframe
     start_time = df.index[0]
     return start_time
 
@@ -41,7 +41,7 @@ while True:
     try:
         now = datetime.datetime.now()
         start_time = get_start_time("KRW-BTC")
-        end_time = start_time + datetime.timedelta(hours=1) # Change time frame
+        end_time = start_time + datetime.timedelta(minutes=1) # Change time frame
 
         if start_time < now < end_time - datetime.timedelta(seconds=10):
             target_price = get_target_price("KRW-BTC", 0.7) # Change K value
@@ -49,11 +49,11 @@ while True:
             if target_price < current_price:
                 krw = get_balance("KRW")
                 if krw > 5000:
-                    upbit.buy_market_order("KRW-BTC", krw*1) #Change of amount
+                    upbit.buy_market_order("KRW-BTC", krw*0.9995) #Change of amount
         else:
             btc = get_balance("BTC")
             if btc > 0.00008:
-                upbit.sell_market_order("KRW-BTC", btc*1) #Change of amount
+                upbit.sell_market_order("KRW-BTC", btc*0.9995) #Change of amount
         time.sleep(1)
     except Exception as e:
         print(e)
